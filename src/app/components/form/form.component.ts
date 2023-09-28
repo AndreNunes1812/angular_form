@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormControl, FormGroup, Validators} from '@angular/forms';
-import { Cliente} from 'src/app/Cliente'
+import { FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import { Cliente } from 'src/app/Cliente'
+import { ClientService } from 'src/app/services/client/client.service';
 
 @Component({
   selector: 'app-form',
@@ -9,23 +10,27 @@ import { Cliente} from 'src/app/Cliente'
 })
 export class FormComponent implements OnInit {
 
+  clientForm!: FormGroup;
+  clientPrevious!: Cliente;
+
   @Output() onSubmit = new EventEmitter<Cliente>();
 
   @Input() clientData: Cliente | null = null;
   @Input() btnText!: string;
 
-  clientForm!: FormGroup;
-
-  constructor(){}
+  constructor(
+    private fb: FormBuilder,
+    private clientService: ClientService,
+  ){}
 
   ngOnInit(): void {
     if(this.clientData) {
-      this.clientForm = new FormGroup({
+      this.clientForm = this.fb.group({
         id: new FormControl(this.clientData.id),
         cliente: new FormControl(this.clientData.cliente)
       });
     } else {
-      this.clientForm = new FormGroup({
+      this.clientForm = this.fb.group({
         id: new FormControl(''),
         cliente: new FormControl('', [Validators.required])
       })
@@ -36,8 +41,27 @@ export class FormComponent implements OnInit {
     return this.clientForm.get('cliente')!;
   }
 
-  submit(){
+  tamanho(): number {
+    return 1;
+  }
 
+  submit(){
+    if(this.clientForm.invalid) {
+      return;
+    }
+
+    console.log(this.clientForm.value);
+
+    this.onSubmit.emit(this.clientForm.value);
+
+    this.getClient(this.clientForm.value);
+
+  }
+
+  getClient(client : string) {
+    let name:string = this.clientService.getClient(client);
+    console.log('retorno:' + name );
+    this.clientForm.get('cliente')?.setValue(name);
   }
 
 }

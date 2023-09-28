@@ -10,11 +10,12 @@
       placeholder="Coloque um cliente"
       required
     />
-
     <div *ngIf="cliente.invalid && formDir.submitted" class="validation-error">
       <p *ngIf="cliente.errors?.['required']">O cliente é obrigatório.</p>
     </div>
   </div>
+
+
 
   <input type="submit" value="{{ btnText }}" />
 </form>

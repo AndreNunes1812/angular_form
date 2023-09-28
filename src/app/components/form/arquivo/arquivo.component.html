@@ -1,0 +1,48 @@
+<form (ngSubmit)="submit()" [formGroup]="arquivoForm" #formDir="ngForm">
+  <div class="form-group">
+    <input type="hidden" formControlName="id" />
+  </div>
+  <div class="form-group">
+    <label for="files">Nome do Arquivo:</label>
+    <input
+      type="file"
+      formControlName="files"
+      required
+      multiple
+      accept=".txt"
+      (change)="onFileChange($event)"
+    />
+  </div>
+  <input type="submit" value="{{ btnText }}" />
+
+</form>
+<div class="form-group">
+  <table border="2" >
+    <tr>
+      <th>id</th>
+      <th>Nome do Arquivo</th>
+      <th>Situação</th>
+      <th>Envio</th>
+
+      <th>Ação</th>
+    </tr>
+    <tr *ngFor="let arq of files; let i=index">
+      <td>
+        {{i}}
+      </td>
+      <td>
+        {{arq.name}}
+      </td>
+      <td align="center"  [ngClass]=" arq.situacao == 'P' ? 'red' : 'green'" >
+        {{ (arq.situacao == "P") ? "Pendente" : "Processado" }}
+      </td>
+      <td align="center" style="width: 200px">
+        {{arq.envio}}
+      </td>
+      <td>
+        <a [routerLink]="['/processando']" [queryParams]="{id: arq.id , fileName: arq.name }" *ngIf="arq.situacao == 'P' ? true : false" >Processar</a>
+        <a routerLink="limpar" class="nav-link" style="padding-left: 50%;"  routerLinkActive="active">Limpar base</a>
+      </td>
+    </tr>
+  </table>
+</div>
